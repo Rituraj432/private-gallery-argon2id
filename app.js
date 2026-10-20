@@ -440,11 +440,13 @@ async function unlockVault(event) {
 
     if (meta.recoveryRequired) { showScreen("recoveryScreen"); return; }
 
-    const seconds = remainingLockSeconds(meta);
+        const seconds = remainingLockSeconds(meta);
     if (seconds > 0) {
         setStatus("Locked. Try again in " + seconds + " seconds.");
+        startCountdown(); // <--- यह नई लाइन जोड़ी गई है
         return;
     }
+
 
     const p2 = $("password2")?.value || "";
     if (!firstPassword || p2.length < MIN_PASSWORD_LENGTH) {
