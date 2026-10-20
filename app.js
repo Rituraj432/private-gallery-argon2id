@@ -411,11 +411,13 @@ function continueUnlock(event) {
 
     if (meta.recoveryRequired) { showScreen("recoveryScreen"); return; }
 
-    const seconds = remainingLockSeconds(meta);
+        const seconds = remainingLockSeconds(meta);
     if (seconds > 0) {
         setStatus("Locked. Try again in " + seconds + " seconds.");
+        startCountdown(); // <--- यह नई लाइन जोड़ी गई है
         return;
     }
+
 
     const p1 = $("password1")?.value || "";
     if (p1.length < MIN_PASSWORD_LENGTH) {
