@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Private Gallery — a local encrypted photo and video vault.">
+  <meta name="referrer" content="no-referrer">
+
+  <title>Private Gallery</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./style.css">
+
+  <script src="./argon2.js"></script>
+  <script src="./app.js" defer></script>
+</head>
+
+<body>
+  <main class="app-container">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">🔐</span>
+        <div>
+          <h1>Private Gallery</h1>
+          <p>Your private photo &amp; video vault</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="statusBox" class="status-box" role="status" aria-live="polite" hidden></section>
+
+    <section id="setupScreen" class="panel" hidden>
+      <h2>Create Your Vault</h2>
+      <p>Create two separate passwords. Remember both carefully.</p>
+
+      <form id="setupForm" autocomplete="off">
+        <label for="setupPassword1">First password</label>
+        <input id="setupPassword1" type="password"
+          minlength="12" maxlength="1024"
+          autocomplete="new-password" required>
+
+        <label for="setupPassword2">Confirm first password</label>
+        <input id="setupPassword2" type="password"
+          minlength="12" maxlength="1024"
+          autocomplete="new-password" required>
+
+        <label for="setupPassword3">Second password</label>
+        <input id="setupPassword3" type="password"
+          minlength="12" maxlength="1024"
+          autocomplete="new-password" required>
+
+        <label for="setupPassword4">Confirm second password</label>
+        <input id="setupPassword4" type="password"
+          minlength="12" maxlength="1024"
+          autocomplete="new-password" required>
+
+        <button type="submit" id="createVaultBtn">Create Secure Vault</button>
+      </form>
+    </section>
+
+    <section id="unlockScreen" class="panel" hidden>
+      <h2>Unlock Your Vault</h2>
+      <p>Enter your passwords in the correct order.</p>
+
+      <form id="unlockForm" autocomplete="off">
+        <div id="step1">
+          <label for="password1">Step 1 — First password</label>
+          <input id="password1" type="password"
+            minlength="12" maxlength="1024"
+            autocomplete="current-password" required>
+          <button type="button" id="continueBtn">Continue</button>
+        </div>
+
+        <div id="step2" hidden>
+          <label for="password2">Step 2 — Second password</label>
+          <input id="password2" type="password"
+            minlength="12" maxlength="1024"
+            autocomplete="current-password" required>
+          <button type="submit" id="unlockBtn">Unlock Vault</button>
+          <button type="button" id="backBtn" class="secondary-button">Back</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="recoveryScreen" class="panel" hidden>
+      <h2>Vault Recovery</h2>
+      <p>Enter your recovery code to restore access.</p>
+
+      <form id="recoveryForm" autocomplete="off">
+        <label for="recoveryInput">Recovery code</label>
+        <textarea id="recoveryInput" rows="3"
+          autocapitalize="off" spellcheck="false" required></textarea>
+        <button type="submit" id="recoverBtn">Recover Vault</button>
+      </form>
+    </section>
+
+    <section id="recoveryDisplayScreen" class="panel" hidden>
+      <h2>Save Your Recovery Code</h2>
+      <p>Store this code somewhere safe. Anyone with the code may be able to recover your vault.</p>
+      <output id="recoveryCodeOutput" class="recovery-code"></output>
+      <button type="button" id="confirmRecoverySavedBtn">
+        I Have Saved My Recovery Code
+      </button>
+    </section>
+
+    <section id="galleryScreen" class="panel" hidden>
+      <div class="gallery-heading">
+        <div>
+          <h2>My Gallery</h2>
+          <p>Your encrypted local collection</p>
+        </div>
+        <button type="button" id="lockBtn" class="secondary-button">Lock</button>
+      </div>
+
+      <div class="gallery-actions">
+        <label for="fileInput" class="button-label">Add Photos / Videos</label>
+        <input id="fileInput" type="file" accept="image/*,video/*" multiple hidden>
+      </div>
+
+      <p id="galleryEmpty" class="empty-state">
+        Your gallery is empty. Add photos or videos to get started.
+      </p>
+
+      <div id="galleryGrid" class="gallery-grid"></div>
+    </section>
+
+    <footer class="app-footer">
+      <p>Private Gallery · Local encrypted storage</p>
+      <p>Your device security still matters.</p>
+    </footer>
+  </main>
+</body>
+</html>
