@@ -148,12 +148,12 @@ async function deriveArgonKey(password, saltBytes) {
     return new Uint8Array(result.hash);
 }
 
-// पहले और दूसरे पासवर्ड को अलग-अलग चेक करने के लिए तेज़ SHA-256 वेरिफायर
+// अब वेरिफायर भी Argon2id से ही बनेगा (SHA-256 की कमज़ोरी खत्म)
 async function createQuickVerifier(password, saltBase64, label) {
     const encoder = new TextEncoder();
-    const data = encoder.encode(label + ":" + saltBase64 + ":" + password);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    return toBase64(new Uint8Array(hashBuffer));
+    const customSalt = encoder.encode(label + ":" + saltBase64);
+    const argonHashBytes = await deriveArgonKey(password, customSalt);
+    return toBase64(argonHashBytes);
 }
 
 async function importAESKey(rawBytes) {
