@@ -1033,6 +1033,10 @@ if ($("galleryEmpty")) {
         }
 
         card.appendChild(mediaElement);
+        // फोटो/वीडियो पर क्लिक करते ही फुल-स्क्रीन में खुलेगा
+        mediaElement.addEventListener("click", () => {
+            openMediaModal(url, item.type);
+        });
 
         const name = document.createElement("p");
         name.className = "gallery-item-name";
@@ -1297,4 +1301,64 @@ document.addEventListener("visibilitychange", () => {
 });
 
 disablePasswordClipboard();
+/* =====================================================
+   FULL SCREEN MEDIA MODAL (जोड़ा गया नया फीचर)
+===================================================== */
+function openMediaModal(url, type) {
+    const modal = $("mediaModal");
+    if (!modal) return;
+    
+    modal.classList.remove("hidden");
+    modal.style.display = "flex"; // सुनिश्चित करने के लिए कि यह दिखे
+    
+    const modalVideo = $("modalVideo");
+    const modalImage = $("modalImage");
+    
+    if (typeof type === "string" && type.startsWith("video/")) {
+        if (modalVideo) {
+            modalVideo.src = url;
+            modalVideo.classList.remove("hidden");
+            modalVideo.style.display = "block";
+            modalVideo.play();
+        }
+        if (modalImage) {
+            modalImage.classList.add("hidden");
+            modalImage.style.display = "none";
+        }
+    } else {
+        if (modalImage) {
+            modalImage.src = url;
+            modalImage.classList.remove("hidden");
+            modalImage.style.display = "block";
+        }
+        if (modalVideo) {
+            modalVideo.classList.add("hidden");
+            modalVideo.style.display = "none";
+            modalVideo.pause();
+            modalVideo.src = "";
+        }
+    }
+}
+
+// मॉडल बंद करने का लॉजिक
+const closeModalBtn = $("closeModal");
+if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", () => {
+        const modal = $("mediaModal");
+        const modalVideo = $("modalVideo");
+        const modalImage = $("modalImage");
+        
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.style.display = "none";
+        }
+        if (modalVideo) {
+            modalVideo.pause();
+            modalVideo.src = "";
+        }
+        if (modalImage) {
+            modalImage.src = "";
+        }
+    });
+}
 init();
