@@ -857,5 +857,51 @@ if (closeModalBtn) {
         }
     });
 }
+/* =====================================================
+   PWA INSTALLATION LOGIC
+===================================================== */
+let deferredPrompt;
+const installAppBtn = document.getElementById('installAppBtn');
+
+// जब ब्राउज़र ऐप इंस्टॉल करने के लिए तैयार हो
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Chrome के डिफ़ॉल्ट प्रॉम्प्ट को रोको
+    e.preventDefault();
+    // इवेंट को सेव कर लो ताकि बाद में बटन पर क्लिक करने पर काम आए
+    deferredPrompt = e;
+    // इंस्टॉल बटन को दिखाओ
+    if (installAppBtn) {
+        installAppBtn.style.display = 'block';
+    }
+});
+
+// जब यूज़र इंस्टॉल बटन पर क्लिक करे
+if (installAppBtn) {
+    installAppBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            // इंस्टॉल वाला पॉप-अप दिखाओ
+            deferredPrompt.prompt();
+            // यूज़र के जवाब का इंतज़ार करो
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('User accepted the A2HS prompt');
+            } else {
+                console.log('User dismissed the A2HS prompt');
+            }
+            // काम हो जाने के बाद प्रॉम्प्ट को हटा दो
+            deferredPrompt = null;
+            // बटन को वापस छुपा दो
+            installAppBtn.style.display = 'none';
+        }
+    });
+}
+
+// अगर ऐप पहले से इंस्टॉल हो गया है, तो बटन मत दिखाओ
+window.addEventListener('appinstalled', (evt) => {
+    console.log('a2hs installed');
+    if (installAppBtn) {
+        installAppBtn.style.display = 'none';
+    }
+});
 
 init();
