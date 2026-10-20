@@ -36,6 +36,7 @@ let busy = false;
 let idleTimer = null;
 let countdownTimer = null;
 let currentObjectURLs = [];
+let isPickingFile = false;
 
 
 /* =========================
