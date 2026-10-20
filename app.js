@@ -903,5 +903,19 @@ window.addEventListener('appinstalled', (evt) => {
         installAppBtn.style.display = 'none';
     }
 });
-
+/* =====================================================
+   SERVICE WORKER REGISTRATION (Offline Support)
+===================================================== */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+                console.log('Service Worker registered successfully');
+            })
+            .catch(error => {
+                console.warn('Service Worker registration failed:', error);
+            });
+    });
+    }
+           
 init();
