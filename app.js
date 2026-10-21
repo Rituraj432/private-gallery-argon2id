@@ -357,7 +357,7 @@ async function createVault(event) {
         const recoveryCode = makeRecoveryCode();
         const recoveryKey = await deriveRecoveryKey(recoveryCode, recoverySalt);
         const wrappedRecoveryKey = await encryptBytes(recoveryKey, rawVaultKey);
-        rwaVaultKey.fill(0);
+        rawVaultKey.fill(0);
         const meta = {
             version: 3,
             passwordSalt: toBase64(passwordSalt),
