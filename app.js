@@ -750,6 +750,12 @@ function lockVault() {
     firstPassword = null;
     selectedItems.clear();
     clearGalleryURLs();
+    if ($("mediaModal")) {
+        $("mediaModal").classList.add("hidden");
+        $("mediaModal").style.display = "none";
+    }
+    if ($("modalVideo")) { $("modalVideo").pause(); $("modalVideo").src = ""; }
+    if ($("modalImage")) { $("modalImage").src = ""; }
 
     if ($("galleryGrid")) $("galleryGrid").replaceChildren();
     for (const id of ["password1", "password2", "recoveryInput"]) {
