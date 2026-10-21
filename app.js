@@ -506,7 +506,8 @@ async function recoverVault(event) {
         const recoveryKey = await deriveRecoveryKey(code, fromBase64(meta.recoverySalt));
         const rawVaultKey = await decryptBytes(recoveryKey, meta.wrappedRecoveryKey);
         vaultKey = await importAESKey(rawVaultKey);
-        firstPassword = null;
+        rawVaultKey.fill(0);
+    firstPassword = null;
         if ($("recoveryInput")) $("recoveryInput").value = "";
         resetFailures();
         await renderGallery();
