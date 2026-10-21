@@ -613,14 +613,62 @@ async function renderGallery() {
             openMediaModal(url, item.type);
         });
 
+        const currentItemNumber = index++;
         const name = document.createElement("p");
         name.className = "gallery-item-name";
-        name.textContent = `Media Item #${index++}`; // असली नाम की जगह सुरक्षित लेबल
+        name.textContent = `Media Item #${currentItemNumber}`;
         card.appendChild(name);
 
+        // बटन्स को एक साथ रखने के लिए कंटेनर
+        const btnContainer = document.createElement("div");
+        btnContainer.style.display = "flex";
+        btnContainer.style.gap = "8px";
+        btnContainer.style.marginTop = "8px";
+
+        // 1. नया SHARE बटन (APK और Browser दोनों के लिए)
+        const shareButton = document.createElement("button");
+        shareButton.type = "button";
+        shareButton.textContent = "↗ Share";
+        shareButton.className = "secondary-button";
+        shareButton.style.flex = "1";
+
+        shareButton.addEventListener("click", async () => {
+            if (!vaultKey) return;
+            try {
+                // फाइल का एक्सटेंशन (जैसे .jpg, .mp4) निकालना ताकि शेयर करते वक्त सही खुले
+                const ext = item.type.split("/")[1] || "bin";
+                const fileName = `private-media-${currentItemNumber}.${ext}`;
+                const file = new File([plainBytes], fileName, { type: item.type });
+
+                // अगर फोन का Native Share सपोर्ट करता है
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: "Private Gallery Media",
+                        files: [file]
+                    });
+                } else {
+                    // अगर APK या ब्राउज़र में Share API न चले, तो सीधा डाउनलोड कर दे (Fallback)
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setStatus("Share not supported here. File downloaded instead.", false);
+                }
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error("Share failed:", error);
+                    setStatus("Unable to share this item.", true);
+                }
+            }
+        });
+
+        // 2. DELETE बटन
         const deleteButton = document.createElement("button");
         deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
+        deleteButton.textContent = "🗑 Delete";
+        deleteButton.style.flex = "1";
 
         deleteButton.addEventListener("click", async () => {
             if (!vaultKey) return;
@@ -635,10 +683,14 @@ async function renderGallery() {
             }
         });
 
-        card.appendChild(deleteButton);
+        btnContainer.appendChild(shareButton);
+        btnContainer.appendChild(deleteButton);
+        card.appendChild(btnContainer);
+        
         grid.appendChild(card);
     }
 }
+
 
 /* =========================
    IDLE LOCK
